@@ -19,6 +19,8 @@ export function DistributionSelector({
 }: DistributionSelectorProps) {
   const distributions = [
     { value: 'normal', label: 'Normal Distribution' },
+    { value: 'binomial', label: 'Binomial Distribution' },
+    { value: 'poisson', label: 'Poisson Distribution' },
     { value: 'studentt', label: 'Student\'s t-Distribution' },
     { value: 'uniform', label: 'Uniform Distribution' },
     { value: 'exponential', label: 'Exponential Distribution' },
@@ -57,6 +59,60 @@ export function DistributionSelector({
                 min="0.1"
               />
             </div>
+          </div>
+        );
+
+      case 'binomial':
+        const binomialParams = params as DistributionParams['binomial'];
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="n">Number of Trials (n)</Label>
+              <Input
+                id="n"
+                type="number"
+                value={binomialParams.n}
+                onChange={(e) => onParamsChange({
+                  ...binomialParams,
+                  n: Math.max(1, parseInt(e.target.value) || 1)
+                })}
+                min="1"
+                step="1"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="p">Probability of Success (p)</Label>
+              <Input
+                id="p"
+                type="number"
+                value={binomialParams.p}
+                onChange={(e) => onParamsChange({
+                  ...binomialParams,
+                  p: Math.min(1, Math.max(0, parseFloat(e.target.value) || 0.5))
+                })}
+                step="0.01"
+                min="0"
+                max="1"
+              />
+            </div>
+          </div>
+        );
+
+      case 'poisson':
+        const poissonParams = params as DistributionParams['poisson'];
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="lambda">Rate Parameter (λ)</Label>
+            <Input
+              id="lambda"
+              type="number"
+              value={poissonParams.lambda}
+              onChange={(e) => onParamsChange({
+                lambda: Math.max(0.1, parseFloat(e.target.value) || 1)
+              })}
+              step="0.1"
+              min="0.1"
+            />
           </div>
         );
 

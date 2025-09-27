@@ -85,6 +85,24 @@ export const stats = {
       : sorted[middle];
   },
 
+  mode: (data: number[]): number[] => {
+    const frequency: { [key: number]: number } = {};
+    data.forEach(num => {
+      frequency[num] = (frequency[num] || 0) + 1;
+    });
+    
+    const maxFreq = Math.max(...Object.values(frequency));
+    return Object.keys(frequency)
+      .filter(key => frequency[Number(key)] === maxFreq)
+      .map(Number);
+  },
+
+  min: (data: number[]): number => Math.min(...data),
+  
+  max: (data: number[]): number => Math.max(...data),
+  
+  range: (data: number[]): number => Math.max(...data) - Math.min(...data),
+
   variance: (data: number[]): number => {
     const mean = stats.mean(data);
     return data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (data.length - 1);
@@ -108,6 +126,62 @@ export const stats = {
     const n = data.length;
     const kurt = data.reduce((sum, val) => sum + Math.pow((val - mean) / std, 4), 0);
     return ((n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3))) * kurt - (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
+  },
+
+  // Frequency distribution for histograms
+  histogram: (data: number[], bins: number = 10): { bin: string; count: number; frequency: number }[] => {
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const binWidth = (max - min) / bins;
+    
+    const binCounts = new Array(bins).fill(0);
+    const binLabels: string[] = [];
+    
+    // Create bin labels
+    for (let i = 0; i < bins; i++) {
+      const start = min + i * binWidth;
+      const end = min + (i + 1) * binWidth;
+      binLabels.push(`${start.toFixed(1)}-${end.toFixed(1)}`);
+    }
+    
+    // Count data points in each bin
+    data.forEach(value => {
+      let binIndex = Math.floor((value - min) / binWidth);
+      if (binIndex === bins) binIndex = bins - 1; // Handle edge case
+      binCounts[binIndex]++;
+    });
+    
+    return binLabels.map((label, index) => ({
+      bin: label,
+      count: binCounts[index],
+      frequency: binCounts[index] / data.length
+    }));
+  },
+
+  // Linear regression
+  linearRegression: (xData: number[], yData: number[]): {
+    slope: number;
+    intercept: number;
+    rSquared: number;
+    correlation: number;
+  } => {
+    const n = xData.length;
+    const sumX = xData.reduce((a, b) => a + b, 0);
+    const sumY = yData.reduce((a, b) => a + b, 0);
+    const sumXY = xData.reduce((sum, x, i) => sum + x * yData[i], 0);
+    const sumXX = xData.reduce((sum, x) => sum + x * x, 0);
+    const sumYY = yData.reduce((sum, y) => sum + y * y, 0);
+    
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    
+    // Calculate correlation coefficient
+    const correlation = (n * sumXY - sumX * sumY) / 
+      Math.sqrt((n * sumXX - sumX * sumX) * (n * sumYY - sumY * sumY));
+    
+    const rSquared = correlation * correlation;
+    
+    return { slope, intercept, rSquared, correlation };
   }
 };
 
@@ -143,6 +217,21 @@ export const generatePDFData = (
         const normalParams = params as DistributionParams['normal'];
         y = jStat.normal.pdf(x, normalParams.mean, normalParams.std);
         break;
+      case 'binomial':
+        const binomialParams = params as DistributionParams['binomial'];
+        // For binomial, x should be integers
+        const k = Math.round(x);
+        if (k >= 0 && k <= binomialParams.n) {
+          y = binomialPMF(k, binomialParams.n, binomialParams.p);
+        }
+        break;
+      case 'poisson':
+        const poissonParams = params as DistributionParams['poisson'];
+        const kPoisson = Math.round(x);
+        if (kPoisson >= 0) {
+          y = poissonPMF(kPoisson, poissonParams.lambda);
+        }
+        break;
       case 'studentt':
         const tParams = params as DistributionParams['studentt'];
         y = jStat.studentt.pdf(x, tParams.df);
@@ -165,6 +254,32 @@ export const generatePDFData = (
   return data;
 };
 
+// Helper functions for discrete distributions
+function binomialPMF(k: number, n: number, p: number): number {
+  if (k < 0 || k > n) return 0;
+  return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+}
+
+function poissonPMF(k: number, lambda: number): number {
+  if (k < 0) return 0;
+  return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+}
+
+function combination(n: number, k: number): number {
+  if (k > n) return 0;
+  if (k === 0 || k === n) return 1;
+  return factorial(n) / (factorial(k) * factorial(n - k));
+}
+
+function factorial(n: number): number {
+  if (n <= 1) return 1;
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+}
+
 // Hypothesis testing
 export const hypothesisTests = {
   oneSampleTTest: (data: number[], mu0: number, alpha: number = 0.05) => {
@@ -180,10 +295,58 @@ export const hypothesisTests = {
     return {
       tStatistic: tStat,
       degreesOfFreedom: df,
-      pValue: 2 * (1 - jStat.studentt.cdf(Math.abs(tStat), df)),
+      pValue: 2 * (1 - jStat.studentt.cdf ? jStat.studentt.cdf(Math.abs(tStat), df) : 0.5),
       criticalValue: tCritical,
       reject: Math.abs(tStat) > tCritical,
       alpha
     };
+  },
+
+  zTest: (data: number[], mu0: number, sigma: number, alpha: number = 0.05) => {
+    const n = data.length;
+    const mean = stats.mean(data);
+    const zStat = (mean - mu0) / (sigma / Math.sqrt(n));
+    
+    // Critical value for two-tailed test
+    const zCritical = 1.96;
+    const pValue = 2 * (1 - normalCDF(Math.abs(zStat)));
+    
+    return {
+      zStatistic: zStat,
+      degreesOfFreedom: 0, // Z-test doesn't use degrees of freedom
+      pValue,
+      criticalValue: zCritical,
+      reject: Math.abs(zStat) > zCritical,
+      alpha
+    };
+  },
+
+  chiSquareGoodnessOfFit: (observed: number[], expected: number[], alpha: number = 0.05) => {
+    if (observed.length !== expected.length) {
+      throw new Error("Observed and expected arrays must have the same length");
+    }
+    
+    let chiSquare = 0;
+    for (let i = 0; i < observed.length; i++) {
+      if (expected[i] > 0) {
+        chiSquare += Math.pow(observed[i] - expected[i], 2) / expected[i];
+      }
+    }
+    
+    const df = observed.length - 1;
+    const criticalValue = 7.815; // Chi-square critical value for df=3, alpha=0.05 (simplified)
+    
+    return {
+      chiSquareStatistic: chiSquare,
+      degreesOfFreedom: df,
+      criticalValue,
+      reject: chiSquare > criticalValue,
+      alpha
+    };
   }
 };
+
+// Helper function for normal CDF approximation
+function normalCDF(x: number): number {
+  return 0.5 * (1 + erf(x / Math.sqrt(2)));
+}

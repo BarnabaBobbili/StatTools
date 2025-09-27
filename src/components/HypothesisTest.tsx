@@ -11,14 +11,19 @@ import { hypothesisTests } from "@/lib/statistical";
 import { TestTube, Target, AlertTriangle, CheckCircle } from "lucide-react";
 
 export function HypothesisTest() {
-  const [testType, setTestType] = useState<"onesample">("onesample");
+  const [testType, setTestType] = useState<"onesample" | "ztest" | "chisquare">("onesample");
   const [dataInput, setDataInput] = useState("98, 99, 100, 101, 102, 103, 104, 105");
   const [nullHypothesis, setNullHypothesis] = useState<number>(100);
+  const [populationStd, setPopulationStd] = useState<number>(15);
+  const [observedInput, setObservedInput] = useState("10, 15, 8, 12");
+  const [expectedInput, setExpectedInput] = useState("12, 12, 12, 12");
   const [alpha, setAlpha] = useState<number>(0.05);
   const [results, setResults] = useState<{
-    tStatistic: number;
+    tStatistic?: number;
+    zStatistic?: number;
+    chiSquareStatistic?: number;
     degreesOfFreedom: number;
-    pValue: number;
+    pValue?: number;
     criticalValue: number;
     reject: boolean;
     alpha: number;
@@ -36,13 +41,30 @@ export function HypothesisTest() {
   const runTest = () => {
     const data = parseData(dataInput);
     
-    if (data.length < 2) {
-      alert("Please enter at least 2 valid numbers.");
-      return;
-    }
-
     if (testType === "onesample") {
+      if (data.length < 2) {
+        alert("Please enter at least 2 valid numbers.");
+        return;
+      }
       const testResults = hypothesisTests.oneSampleTTest(data, nullHypothesis, alpha);
+      setResults(testResults);
+    } else if (testType === "ztest") {
+      if (data.length < 2) {
+        alert("Please enter at least 2 valid numbers.");
+        return;
+      }
+      const testResults = hypothesisTests.zTest(data, nullHypothesis, populationStd, alpha);
+      setResults(testResults);
+    } else if (testType === "chisquare") {
+      const observed = parseData(observedInput);
+      const expected = parseData(expectedInput);
+      
+      if (observed.length !== expected.length || observed.length < 2) {
+        alert("Observed and expected data must have the same length (at least 2 values).");
+        return;
+      }
+      
+      const testResults = hypothesisTests.chiSquareGoodnessOfFit(observed, expected, alpha);
       setResults(testResults);
     }
   };
@@ -59,12 +81,14 @@ export function HypothesisTest() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Test Type</Label>
-            <Select value={testType} onValueChange={(value: "onesample") => setTestType(value)}>
+            <Select value={testType} onValueChange={(value: "onesample" | "ztest" | "chisquare") => setTestType(value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="onesample">One-Sample t-Test</SelectItem>
+                <SelectItem value="ztest">One-Sample Z-Test</SelectItem>
+                <SelectItem value="chisquare">Chi-Square Goodness of Fit</SelectItem>
               </SelectContent>
             </Select>
           </div>

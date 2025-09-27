@@ -37,6 +37,12 @@ const Index = () => {
       case 'normal':
         setParams({ mean: 0, std: 1 } as DistributionParams['normal']);
         break;
+      case 'binomial':
+        setParams({ n: 10, p: 0.5 } as DistributionParams['binomial']);
+        break;
+      case 'poisson':
+        setParams({ lambda: 3 } as DistributionParams['poisson']);
+        break;
       case 'studentt':
         setParams({ df: 10 } as DistributionParams['studentt']);
         break;
