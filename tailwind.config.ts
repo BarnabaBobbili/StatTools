@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -47,6 +48,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        stats: {
+          success: "hsl(var(--stats-success))",
+          warning: "hsl(var(--stats-warning))",
+          info: "hsl(var(--stats-info))",
+          chart1: "hsl(var(--stats-chart-1))",
+          chart2: "hsl(var(--stats-chart-2))",
+          chart3: "hsl(var(--stats-chart-3))",
+          chart4: "hsl(var(--stats-chart-4))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -62,6 +72,18 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-secondary": "var(--gradient-secondary)",
+        "gradient-muted": "var(--gradient-muted)",
+      },
+      boxShadow: {
+        elegant: "var(--shadow-elegant)",
+        card: "var(--shadow-card)",
+      },
+      transitionTimingFunction: {
+        smooth: "var(--transition-smooth)",
       },
       keyframes: {
         "accordion-down": {
