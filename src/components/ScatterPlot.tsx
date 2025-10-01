@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -36,6 +38,16 @@ export function ScatterPlot({
   showRegression = true 
 }: ScatterPlotProps) {
   const chartRef = useRef<ChartJS<"scatter", {x: number, y: number}[], unknown>>(null);
+
+  const handleExport = () => {
+    if (chartRef.current) {
+      const url = chartRef.current.toBase64Image();
+      const link = document.createElement('a');
+      link.download = 'scatter_plot.png';
+      link.href = url;
+      link.click();
+    }
+  };
 
   // Prepare scatter plot data
   const scatterData = xData.map((x, i) => ({ x, y: yData[i] }));
@@ -149,6 +161,17 @@ export function ScatterPlot({
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleExport}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export PNG
+        </Button>
+      </div>
       <div className="h-64 w-full">
         <Scatter ref={chartRef} data={chartData} options={options} />
       </div>

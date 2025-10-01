@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { stats } from "@/lib/statistical";
+import { useRef } from "react";
 
 interface BoxPlotProps {
   data: number[];
@@ -7,6 +10,32 @@ interface BoxPlotProps {
 }
 
 export function BoxPlot({ data, title = "Box Plot" }: BoxPlotProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleExport = () => {
+    if (containerRef.current) {
+      // For now, we'll use a simple canvas screenshot approach
+      // In production, you might want to use html2canvas or similar library
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx) {
+        canvas.width = containerRef.current.offsetWidth;
+        canvas.height = containerRef.current.offsetHeight;
+        
+        // Set white background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const url = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = 'box_plot.png';
+        link.href = url;
+        link.click();
+      }
+    }
+  };
+
   if (data.length < 5) {
     return (
       <Card className="shadow-card">
@@ -48,9 +77,20 @@ export function BoxPlot({ data, title = "Box Plot" }: BoxPlotProps) {
   const getPosition = (value: number) => ((value - min) / range) * 100;
 
   return (
-    <Card className="shadow-card">
+    <Card className="shadow-card" ref={containerRef}>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle>{title}</CardTitle>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExport}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Box plot visualization */}

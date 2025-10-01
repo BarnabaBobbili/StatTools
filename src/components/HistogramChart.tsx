@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +30,16 @@ interface HistogramChartProps {
 
 export function HistogramChart({ data, bins = 10, title = "Data Distribution" }: HistogramChartProps) {
   const chartRef = useRef<ChartJS<"bar", number[], string>>(null);
+
+  const handleExport = () => {
+    if (chartRef.current) {
+      const url = chartRef.current.toBase64Image();
+      const link = document.createElement('a');
+      link.download = 'histogram.png';
+      link.href = url;
+      link.click();
+    }
+  };
 
   const histogramData = stats.histogram(data, bins);
 
@@ -108,8 +120,21 @@ export function HistogramChart({ data, bins = 10, title = "Data Distribution" }:
   };
 
   return (
-    <div className="h-64 w-full">
-      <Bar ref={chartRef} data={chartData} options={options} />
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleExport}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export PNG
+        </Button>
+      </div>
+      <div className="h-64 w-full">
+        <Bar ref={chartRef} data={chartData} options={options} />
+      </div>
     </div>
   );
 }

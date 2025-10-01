@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { DistributionType, DistributionParams } from "@/lib/statistical";
 
 interface DistributionSelectorProps {
@@ -31,32 +32,41 @@ export function DistributionSelector({
       case 'normal':
         const normalParams = params as DistributionParams['normal'];
         return (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="mean">Mean (μ)</Label>
-              <Input
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="mean">Mean (μ)</Label>
+                <span className="text-sm font-mono text-muted-foreground">{normalParams.mean.toFixed(2)}</span>
+              </div>
+              <Slider
                 id="mean"
-                type="number"
-                value={normalParams.mean}
-                onChange={(e) => onParamsChange({
+                value={[normalParams.mean]}
+                onValueChange={([value]) => onParamsChange({
                   ...normalParams,
-                  mean: parseFloat(e.target.value) || 0
+                  mean: value
                 })}
-                step="0.1"
+                min={-10}
+                max={10}
+                step={0.1}
+                className="w-full"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="std">Standard Deviation (σ)</Label>
-              <Input
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="std">Standard Deviation (σ)</Label>
+                <span className="text-sm font-mono text-muted-foreground">{normalParams.std.toFixed(2)}</span>
+              </div>
+              <Slider
                 id="std"
-                type="number"
-                value={normalParams.std}
-                onChange={(e) => onParamsChange({
+                value={[normalParams.std]}
+                onValueChange={([value]) => onParamsChange({
                   ...normalParams,
-                  std: Math.max(0.1, parseFloat(e.target.value) || 1)
+                  std: Math.max(0.1, value)
                 })}
-                step="0.1"
-                min="0.1"
+                min={0.1}
+                max={5}
+                step={0.1}
+                className="w-full"
               />
             </div>
           </div>
@@ -65,34 +75,41 @@ export function DistributionSelector({
       case 'binomial':
         const binomialParams = params as DistributionParams['binomial'];
         return (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="n">Number of Trials (n)</Label>
-              <Input
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="n">Number of Trials (n)</Label>
+                <span className="text-sm font-mono text-muted-foreground">{binomialParams.n}</span>
+              </div>
+              <Slider
                 id="n"
-                type="number"
-                value={binomialParams.n}
-                onChange={(e) => onParamsChange({
+                value={[binomialParams.n]}
+                onValueChange={([value]) => onParamsChange({
                   ...binomialParams,
-                  n: Math.max(1, parseInt(e.target.value) || 1)
+                  n: Math.max(1, Math.round(value))
                 })}
-                min="1"
-                step="1"
+                min={1}
+                max={100}
+                step={1}
+                className="w-full"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="p">Probability of Success (p)</Label>
-              <Input
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="p">Probability of Success (p)</Label>
+                <span className="text-sm font-mono text-muted-foreground">{binomialParams.p.toFixed(2)}</span>
+              </div>
+              <Slider
                 id="p"
-                type="number"
-                value={binomialParams.p}
-                onChange={(e) => onParamsChange({
+                value={[binomialParams.p]}
+                onValueChange={([value]) => onParamsChange({
                   ...binomialParams,
-                  p: Math.min(1, Math.max(0, parseFloat(e.target.value) || 0.5))
+                  p: Math.min(1, Math.max(0, value))
                 })}
-                step="0.01"
-                min="0"
-                max="1"
+                min={0}
+                max={1}
+                step={0.01}
+                className="w-full"
               />
             </div>
           </div>
@@ -101,17 +118,21 @@ export function DistributionSelector({
       case 'poisson':
         const poissonParams = params as DistributionParams['poisson'];
         return (
-          <div className="space-y-2">
-            <Label htmlFor="lambda">Rate Parameter (λ)</Label>
-            <Input
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="lambda">Rate Parameter (λ)</Label>
+              <span className="text-sm font-mono text-muted-foreground">{poissonParams.lambda.toFixed(2)}</span>
+            </div>
+            <Slider
               id="lambda"
-              type="number"
-              value={poissonParams.lambda}
-              onChange={(e) => onParamsChange({
-                lambda: Math.max(0.1, parseFloat(e.target.value) || 1)
+              value={[poissonParams.lambda]}
+              onValueChange={([value]) => onParamsChange({
+                lambda: Math.max(0.1, value)
               })}
-              step="0.1"
-              min="0.1"
+              min={0.1}
+              max={20}
+              step={0.1}
+              className="w-full"
             />
           </div>
         );
@@ -119,17 +140,21 @@ export function DistributionSelector({
       case 'studentt':
         const tParams = params as DistributionParams['studentt'];
         return (
-          <div className="space-y-2">
-            <Label htmlFor="df">Degrees of Freedom</Label>
-            <Input
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="df">Degrees of Freedom</Label>
+              <span className="text-sm font-mono text-muted-foreground">{tParams.df}</span>
+            </div>
+            <Slider
               id="df"
-              type="number"
-              value={tParams.df}
-              onChange={(e) => onParamsChange({
-                df: Math.max(1, parseInt(e.target.value) || 1)
+              value={[tParams.df]}
+              onValueChange={([value]) => onParamsChange({
+                df: Math.max(1, Math.round(value))
               })}
-              min="1"
-              step="1"
+              min={1}
+              max={100}
+              step={1}
+              className="w-full"
             />
           </div>
         );
@@ -137,38 +162,46 @@ export function DistributionSelector({
       case 'uniform':
         const uniformParams = params as DistributionParams['uniform'];
         return (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="min">Minimum</Label>
-              <Input
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="min">Minimum</Label>
+                <span className="text-sm font-mono text-muted-foreground">{uniformParams.min.toFixed(2)}</span>
+              </div>
+              <Slider
                 id="min"
-                type="number"
-                value={uniformParams.min}
-                onChange={(e) => {
-                  const newMin = parseFloat(e.target.value) || 0;
+                value={[uniformParams.min]}
+                onValueChange={([value]) => {
                   onParamsChange({
                     ...uniformParams,
-                    min: newMin,
-                    max: Math.max(newMin + 0.1, uniformParams.max)
+                    min: value,
+                    max: Math.max(value + 0.1, uniformParams.max)
                   });
                 }}
-                step="0.1"
+                min={-10}
+                max={10}
+                step={0.1}
+                className="w-full"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="max">Maximum</Label>
-              <Input
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="max">Maximum</Label>
+                <span className="text-sm font-mono text-muted-foreground">{uniformParams.max.toFixed(2)}</span>
+              </div>
+              <Slider
                 id="max"
-                type="number"
-                value={uniformParams.max}
-                onChange={(e) => {
-                  const newMax = parseFloat(e.target.value) || 1;
+                value={[uniformParams.max]}
+                onValueChange={([value]) => {
                   onParamsChange({
                     ...uniformParams,
-                    max: Math.max(uniformParams.min + 0.1, newMax)
+                    max: Math.max(uniformParams.min + 0.1, value)
                   });
                 }}
-                step="0.1"
+                min={-10}
+                max={10}
+                step={0.1}
+                className="w-full"
               />
             </div>
           </div>
@@ -177,17 +210,21 @@ export function DistributionSelector({
       case 'exponential':
         const expParams = params as DistributionParams['exponential'];
         return (
-          <div className="space-y-2">
-            <Label htmlFor="rate">Rate (λ)</Label>
-            <Input
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="rate">Rate (λ)</Label>
+              <span className="text-sm font-mono text-muted-foreground">{expParams.rate.toFixed(2)}</span>
+            </div>
+            <Slider
               id="rate"
-              type="number"
-              value={expParams.rate}
-              onChange={(e) => onParamsChange({
-                rate: Math.max(0.1, parseFloat(e.target.value) || 1)
+              value={[expParams.rate]}
+              onValueChange={([value]) => onParamsChange({
+                rate: Math.max(0.1, value)
               })}
-              step="0.1"
-              min="0.1"
+              min={0.1}
+              max={5}
+              step={0.1}
+              className="w-full"
             />
           </div>
         );

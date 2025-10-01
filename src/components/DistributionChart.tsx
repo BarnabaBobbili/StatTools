@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -42,6 +44,16 @@ export function DistributionChart({
   xMax = 4
 }: DistributionChartProps) {
   const chartRef = useRef<ChartJS<"line", { x: number; y: number }[], unknown>>(null);
+
+  const handleExport = () => {
+    if (chartRef.current) {
+      const url = chartRef.current.toBase64Image();
+      const link = document.createElement('a');
+      link.download = `${distribution}_distribution.png`;
+      link.href = url;
+      link.click();
+    }
+  };
 
   // Adjust x range based on distribution
   const getXRange = () => {
@@ -151,8 +163,21 @@ export function DistributionChart({
   };
 
   return (
-    <div className="h-64 w-full">
-      <Line ref={chartRef} data={chartData} options={options} />
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleExport}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export PNG
+        </Button>
+      </div>
+      <div className="h-64 w-full">
+        <Line ref={chartRef} data={chartData} options={options} />
+      </div>
     </div>
   );
 }
