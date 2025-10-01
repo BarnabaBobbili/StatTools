@@ -7,8 +7,9 @@ import { DistributionSelector } from "@/components/DistributionSelector";
 import { StatisticalAnalysis } from "@/components/StatisticalAnalysis";
 import { ProbabilityCalculator } from "@/components/ProbabilityCalculator";
 import { HypothesisTest } from "@/components/HypothesisTest";
+import { DatasetComparison } from "@/components/DatasetComparison";
 import { DistributionType, DistributionParams } from "@/lib/statistical";
-import { BarChart3, Calculator, TestTube, TrendingUp, Sigma } from "lucide-react";
+import { BarChart3, Calculator, TestTube, TrendingUp, Sigma, GitCompare } from "lucide-react";
 
 const Index = () => {
   const [distribution, setDistribution] = useState<DistributionType>("normal");
@@ -102,7 +103,7 @@ const Index = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue="distributions" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4 lg:w-fit mx-auto">
+          <TabsList className="grid w-full grid-cols-5 lg:w-fit mx-auto">
             <TabsTrigger value="distributions" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Distributions</span>
@@ -110,6 +111,10 @@ const Index = () => {
             <TabsTrigger value="analysis" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               <span className="hidden sm:inline">Analysis</span>
+            </TabsTrigger>
+            <TabsTrigger value="compare" className="flex items-center gap-2">
+              <GitCompare className="h-4 w-4" />
+              <span className="hidden sm:inline">Compare</span>
             </TabsTrigger>
             <TabsTrigger value="probability" className="flex items-center gap-2">
               <Calculator className="h-4 w-4" />
@@ -151,6 +156,10 @@ const Index = () => {
 
           <TabsContent value="analysis">
             <StatisticalAnalysis />
+          </TabsContent>
+
+          <TabsContent value="compare">
+            <DatasetComparison />
           </TabsContent>
 
           <TabsContent value="probability">

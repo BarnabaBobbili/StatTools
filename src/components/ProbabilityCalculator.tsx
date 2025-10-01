@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatCard } from "./StatCard";
 import { jStat } from "@/lib/statistical";
-import { Calculator, Target } from "lucide-react";
+import { Calculator, Target, Info } from "lucide-react";
 
 export function ProbabilityCalculator() {
   const [distribution, setDistribution] = useState<"normal" | "studentt">("normal");
@@ -50,6 +51,16 @@ export function ProbabilityCalculator() {
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
             Probability Calculator
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p>Calculate PDF, CDF, and survival functions for probability distributions</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

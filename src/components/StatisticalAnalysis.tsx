@@ -6,13 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatCard } from "./StatCard";
 import { CSVUploader } from "./CSVUploader";
 import { HistogramChart } from "./HistogramChart";
 import { BoxPlot } from "./BoxPlot";
 import { ScatterPlot } from "./ScatterPlot";
 import { stats } from "@/lib/statistical";
-import { BarChart3, TrendingUp, Sigma, Target, Upload, ScatterChart } from "lucide-react";
+import { sampleDatasets, sampleRegressionData, SampleDatasetKey, SampleRegressionKey } from "@/lib/sampleData";
+import { BarChart3, TrendingUp, Sigma, Target, Upload, ScatterChart, Sparkles, Info } from "lucide-react";
 
 export function StatisticalAnalysis() {
   const [dataInput, setDataInput] = useState("1, 2, 3, 4, 5, 6, 7, 8, 9, 10");
@@ -72,6 +74,18 @@ export function StatisticalAnalysis() {
     setFilename(csvFilename || "");
   };
 
+  const loadSampleData = (key: SampleDatasetKey) => {
+    const sample = sampleDatasets[key];
+    setDataInput(sample.data.join(", "));
+    setFilename(`Sample: ${sample.name}`);
+  };
+
+  const loadSampleRegression = (key: SampleRegressionKey) => {
+    const sample = sampleRegressionData[key];
+    setXDataInput(sample.x.join(", "));
+    setYDataInput(sample.y.join(", "));
+  };
+
   const parseXYData = (xInput: string, yInput: string): { x: number[], y: number[] } => {
     const xData = parseData(xInput);
     const yData = parseData(yInput);
@@ -104,12 +118,53 @@ export function StatisticalAnalysis() {
         </TabsList>
 
         <TabsContent value="analysis" className="space-y-6">
+          <Card className="shadow-card bg-gradient-subtle border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                Quick Start with Sample Data
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {(Object.keys(sampleDatasets) as SampleDatasetKey[]).map((key) => (
+                  <TooltipProvider key={key}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadSampleData(key)}
+                        >
+                          {sampleDatasets[key].name}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{sampleDatasets[key].description}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
                   Manual Data Input
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Enter numbers separated by commas, spaces, or new lines</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -264,20 +319,65 @@ export function StatisticalAnalysis() {
             </div>
           )}
           {!analysisResults && (
-            <Card className="shadow-card">
+            <Card className="shadow-card bg-muted/30">
               <CardContent className="flex items-center justify-center h-64">
-                <p className="text-muted-foreground">Run data analysis first to see visualizations</p>
+                <div className="text-center space-y-2">
+                  <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                  <p className="text-muted-foreground">Run data analysis first to see visualizations</p>
+                  <p className="text-sm text-muted-foreground/70">Go to "Data Analysis" tab to get started</p>
+                </div>
               </CardContent>
             </Card>
           )}
         </TabsContent>
 
         <TabsContent value="regression" className="space-y-6">
+          <Card className="shadow-card bg-gradient-subtle border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                Sample Regression Data
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {(Object.keys(sampleRegressionData) as SampleRegressionKey[]).map((key) => (
+                  <TooltipProvider key={key}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadSampleRegression(key)}
+                        >
+                          {sampleRegressionData[key].name}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{sampleRegressionData[key].description}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ScatterChart className="h-5 w-5" />
                 Scatter Plot & Regression
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Visualize relationships between two variables</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

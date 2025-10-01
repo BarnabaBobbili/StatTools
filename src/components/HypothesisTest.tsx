@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatCard } from "./StatCard";
 import { hypothesisTests } from "@/lib/statistical";
-import { TestTube, Target, AlertTriangle, CheckCircle } from "lucide-react";
+import { TestTube, Target, AlertTriangle, CheckCircle, Info } from "lucide-react";
 
 export function HypothesisTest() {
   const [testType, setTestType] = useState<"onesample" | "ztest" | "chisquare">("onesample");
@@ -76,6 +77,16 @@ export function HypothesisTest() {
           <CardTitle className="flex items-center gap-2">
             <TestTube className="h-5 w-5" />
             Hypothesis Testing
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p>Test whether a sample mean differs significantly from a hypothesized population mean</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
