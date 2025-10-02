@@ -8,8 +8,11 @@ import { StatisticalAnalysis } from "@/components/StatisticalAnalysis";
 import { ProbabilityCalculator } from "@/components/ProbabilityCalculator";
 import { HypothesisTest } from "@/components/HypothesisTest";
 import { DatasetComparison } from "@/components/DatasetComparison";
+import { AdvancedHypothesisTest } from "@/components/AdvancedHypothesisTest";
+import { ConfidenceIntervals } from "@/components/ConfidenceIntervals";
+import { SimulationTools } from "@/components/SimulationTools";
 import { DistributionType, DistributionParams } from "@/lib/statistical";
-import { BarChart3, Calculator, TestTube, TrendingUp, Sigma, GitCompare } from "lucide-react";
+import { BarChart3, Calculator, TestTube, TrendingUp, Sigma, GitCompare, Target, Dices } from "lucide-react";
 
 const Index = () => {
   const [distribution, setDistribution] = useState<DistributionType>("normal");
@@ -103,7 +106,7 @@ const Index = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue="distributions" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-5 lg:w-fit mx-auto">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-8 lg:w-fit mx-auto">
             <TabsTrigger value="distributions" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Distributions</span>
@@ -122,7 +125,19 @@ const Index = () => {
             </TabsTrigger>
             <TabsTrigger value="hypothesis" className="flex items-center gap-2">
               <TestTube className="h-4 w-4" />
-              <span className="hidden sm:inline">Hypothesis</span>
+              <span className="hidden sm:inline">Tests</span>
+            </TabsTrigger>
+            <TabsTrigger value="advanced" className="flex items-center gap-2">
+              <TestTube className="h-4 w-4" />
+              <span className="hidden sm:inline">Advanced</span>
+            </TabsTrigger>
+            <TabsTrigger value="intervals" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              <span className="hidden sm:inline">Intervals</span>
+            </TabsTrigger>
+            <TabsTrigger value="simulations" className="flex items-center gap-2">
+              <Dices className="h-4 w-4" />
+              <span className="hidden sm:inline">Simulations</span>
             </TabsTrigger>
           </TabsList>
 
@@ -168,6 +183,18 @@ const Index = () => {
 
           <TabsContent value="hypothesis">
             <HypothesisTest />
+          </TabsContent>
+
+          <TabsContent value="advanced">
+            <AdvancedHypothesisTest />
+          </TabsContent>
+
+          <TabsContent value="intervals">
+            <ConfidenceIntervals />
+          </TabsContent>
+
+          <TabsContent value="simulations">
+            <SimulationTools />
           </TabsContent>
         </Tabs>
       </div>
