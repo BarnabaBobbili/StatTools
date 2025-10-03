@@ -11,8 +11,20 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      {/* Toast notifications with custom positioning for mobile */}
       <Toaster />
-      <Sonner />
+      <Sonner 
+        position="top-center"
+        expand={true}
+        richColors
+        closeButton
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+          className: 'toast-mobile-friendly',
+        }}
+      />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />

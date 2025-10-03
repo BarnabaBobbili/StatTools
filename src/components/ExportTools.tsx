@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, FileText } from "lucide-react";
-import { toast } from "sonner";
+import { showSuccess, showError, showInfo } from "@/lib/errorHandling";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ExportToolsProps {
   // Data to export
@@ -23,9 +29,15 @@ export function ExportTools({
   reportTitle = "Statistical Analysis Report" 
 }: ExportToolsProps) {
 
-  // Export data as CSV
+  // Export data as CSV with comprehensive error handling
   const exportCSV = () => {
     try {
+      // Validate data
+      if (!data || data.length === 0) {
+        showError("No data available to export", 'validation', 'warning');
+        return;
+      }
+
       // Create CSV content
       let csvContent = "Index,Value\n";
       data.forEach((value, index) => {
@@ -53,9 +65,15 @@ export function ExportTools({
       link.click();
       document.body.removeChild(link);
 
-      toast.success("CSV exported successfully");
+      showSuccess(
+        "CSV exported successfully",
+        `${data.length} data points exported`
+      );
     } catch (error) {
-      toast.error("Failed to export CSV");
+      showError(
+        "Failed to export CSV file",
+        'file'
+      );
       console.error("CSV export error:", error);
     }
   };
@@ -63,7 +81,13 @@ export function ExportTools({
   // Export full report as PDF with chart screenshot
   const exportPDF = async () => {
     try {
-      toast.info("Generating PDF... Please wait");
+      // Validate data
+      if (!data || data.length === 0) {
+        showError("No data available to export", 'validation', 'warning');
+        return;
+      }
+
+      showInfo("Generating PDF report... Please wait");
 
       // Create new PDF document (A4 size)
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -155,7 +179,11 @@ export function ExportTools({
             yPosition += imgHeight + 10;
           } catch (error) {
             console.error("Chart capture error:", error);
-            toast.error("Could not capture chart, continuing with PDF...");
+            showError(
+              "Could not capture chart, continuing with PDF...",
+              'file',
+              'warning'
+            );
           }
         }
       }
@@ -202,9 +230,12 @@ export function ExportTools({
 
       // Save PDF
       pdf.save(`${reportTitle.replace(/\s/g, '_')}.pdf`);
-      toast.success("PDF report exported successfully");
+      showSuccess(
+        "PDF report exported successfully",
+        `Complete report with ${data.length} data points`
+      );
     } catch (error) {
-      toast.error("Failed to export PDF");
+      showError("Failed to generate PDF report", 'file');
       console.error("PDF export error:", error);
     }
   };
@@ -219,7 +250,23 @@ export function ExportTools({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
-          Export your data and analysis results in various formats
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="cursor-help hover:text-foreground transition-colors">
+                  Export your data and analysis results in various formats. 
+                  <span className="text-primary"> Hover for details.</span>
+                </p>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm">
+                <p><strong>Export Options:</strong></p>
+                <ul className="list-disc list-inside space-y-1 mt-1">
+                  <li><strong>CSV:</strong> Raw data + statistics, compatible with Excel</li>
+                  <li><strong>PDF:</strong> Complete report with charts and formatted statistics</li>
+                </ul>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

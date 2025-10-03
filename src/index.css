@@ -8,146 +8,162 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Academic color palette - Professional blue/teal theme */
-    /* Neutral background for readability */
-    --background: 210 20% 98%; /* Slate-50 equivalent */
-    --foreground: 215 25% 15%; /* Slate-800 equivalent */
+    /* ========================================
+       PROFESSIONAL ACADEMIC COLOR PALETTE
+       Updated to match Blue-600/Teal-600/Amber-500 theme
+       ======================================== */
+    
+    /* Neutral colors for maximum readability */
+    --background: 210 40% 98%; /* Slate-50: #f8fafc */
+    --foreground: 217 33% 17%; /* Slate-800: #1e293b */
 
-    /* Card colors with subtle contrast */
+    /* Card colors with clean white background */
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 217 33% 17%;
 
     /* Popover colors */
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 217 33% 17%;
 
-    /* Primary: Blue-600 for main actions and headers */
+    /* PRIMARY: Blue-600 (#2563eb) for main actions and headers */
     --primary: 217 91% 60%; /* Blue-600 */
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 91% 70%; /* Lighter blue for effects */
-    --primary-dark: 217 91% 48%; /* Blue-800 for emphasis */
+    --primary-foreground: 0 0% 100%; /* White text on blue */
+    --primary-glow: 217 91% 70%; /* Lighter blue for glows/hover */
+    --primary-dark: 217 91% 40%; /* Blue-800: #1e40af for emphasis */
 
-    /* Secondary: Teal-600 for highlights, sliders, dataset tags */
-    --secondary: 178 78% 35%; /* Teal-600 */
+    /* SECONDARY: Teal-600 (#0d9488) for highlights, sliders, dataset tags */
+    --secondary: 173 80% 40%; /* Teal-600 */
     --secondary-foreground: 0 0% 100%;
 
-    /* Muted colors for subtle elements */
-    --muted: 210 20% 92%;
-    --muted-foreground: 215 15% 55%;
+    /* Muted colors for subtle backgrounds */
+    --muted: 210 40% 96%; /* Very light slate */
+    --muted-foreground: 215 16% 47%; /* Slate-600 */
 
-    /* Accent: Amber-500 for statistical significance and warnings */
+    /* ACCENT: Amber-500 (#f59e0b) for statistical significance and warnings */
     --accent: 38 92% 50%; /* Amber-500 */
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 217 33% 17%; /* Dark text on amber */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive (errors) */
+    --destructive: 0 72% 51%; /* Red-500 */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 200 85% 35%;
+    /* Border and input styles */
+    --border: 214 32% 91%; /* Slate-200 */
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%; /* Primary blue for focus rings */
 
-    /* Custom statistical theme colors for data visualization */
-    --stats-success: 140 60% 45%; /* Green for positive results */
-    --stats-warning: 38 92% 50%; /* Amber for warnings/significance */
-    --stats-info: 217 91% 60%; /* Blue for information */
+    /* ========================================
+       STATISTICAL THEME COLORS
+       For data visualization and test results
+       ======================================== */
+    --stats-success: 142 76% 36%; /* Teal-600 for acceptance/success */
+    --stats-warning: 38 92% 50%; /* Amber-500 for significance/warnings */
+    --stats-info: 217 91% 60%; /* Blue-600 for informational */
+    
+    /* Chart colors using the academic palette */
     --stats-chart-1: 217 91% 60%; /* Primary blue */
-    --stats-chart-2: 178 78% 35%; /* Teal */
-    --stats-chart-3: 38 92% 50%; /* Amber */
-    --stats-chart-4: 140 60% 45%; /* Green */
+    --stats-chart-2: 173 80% 40%; /* Secondary teal */
+    --stats-chart-3: 38 92% 50%; /* Accent amber */
+    --stats-chart-4: 142 71% 45%; /* Emerald-500 */
 
-    /* Gradients for hero sections and accents */
+    /* ========================================
+       GRADIENTS
+       Beautiful gradients using academic colors
+       ======================================== */
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(178 78% 35%), hsl(38 92% 50%));
-    --gradient-muted: linear-gradient(180deg, hsl(210 20% 98%), hsl(210 20% 92%));
+    --gradient-secondary: linear-gradient(135deg, hsl(173 80% 40%), hsl(38 92% 50%));
+    --gradient-muted: linear-gradient(180deg, hsl(210 40% 98%), hsl(214 32% 91%));
 
-    /* Shadows for depth and elevation */
-    --shadow-elegant: 0 4px 16px -4px hsl(217 91% 60% / 0.15);
-    --shadow-card: 0 2px 8px -2px hsl(215 25% 15% / 0.08);
-    --shadow-strong: 0 8px 24px -8px hsl(217 91% 60% / 0.25);
+    /* ========================================
+       SHADOWS
+       Subtle elevation for depth
+       ======================================== */
+    --shadow-elegant: 0 4px 16px -4px hsl(217 91% 60% / 0.12);
+    --shadow-card: 0 2px 8px -2px hsl(217 33% 17% / 0.08);
+    --shadow-strong: 0 8px 24px -8px hsl(217 91% 60% / 0.20);
 
-    /* Animation */
+    /* Animation timing */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Border radius */
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 217 33% 17%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 217 33% 17%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 217 91% 60%;
   }
 
   .dark {
-    /* Dark mode - Academic palette adjusted for dark backgrounds */
-    --background: 215 35% 8%;
-    --foreground: 210 40% 95%;
+    /* ========================================
+       DARK MODE - Academic palette optimized
+       ======================================== */
+    --background: 217 33% 10%; /* Dark slate */
+    --foreground: 210 40% 98%; /* Light slate */
 
-    --card: 215 30% 12%;
-    --card-foreground: 210 40% 95%;
+    --card: 217 33% 14%; /* Slightly lighter dark */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 215 30% 12%;
-    --popover-foreground: 210 40% 95%;
+    --popover: 217 33% 14%;
+    --popover-foreground: 210 40% 98%;
 
-    /* Primary: Lighter blue for dark mode visibility */
-    --primary: 217 91% 70%;
-    --primary-foreground: 215 35% 8%;
+    /* PRIMARY: Lighter blue for dark mode visibility */
+    --primary: 217 91% 70%; /* Lighter blue-500 */
+    --primary-foreground: 217 33% 10%;
     --primary-glow: 217 91% 80%;
     --primary-dark: 217 91% 55%;
 
-    /* Secondary: Adjusted teal for dark mode */
-    --secondary: 178 70% 45%;
-    --secondary-foreground: 210 40% 95%;
+    /* SECONDARY: Brighter teal for dark mode */
+    --secondary: 173 80% 50%; /* Brighter teal */
+    --secondary-foreground: 217 33% 10%;
 
-    --muted: 215 25% 20%;
-    --muted-foreground: 215 15% 65%;
+    --muted: 217 33% 18%;
+    --muted-foreground: 215 20% 65%;
 
-    /* Accent: Slightly brighter amber for dark mode */
-    --accent: 38 92% 60%;
-    --accent-foreground: 210 40% 95%;
+    /* ACCENT: Brighter amber for dark mode */
+    --accent: 38 92% 60%; /* Brighter amber */
+    --accent-foreground: 217 33% 10%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 200 85% 50%;
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
+    --ring: 217 91% 70%;
 
-    /* Custom statistical theme colors - dark mode adjusted */
-    --stats-success: 140 50% 50%;
+    /* Statistical colors - dark mode adjusted */
+    --stats-success: 142 76% 45%;
     --stats-warning: 38 92% 60%;
     --stats-info: 217 91% 70%;
     --stats-chart-1: 217 91% 70%;
-    --stats-chart-2: 178 70% 45%;
+    --stats-chart-2: 173 80% 50%;
     --stats-chart-3: 38 92% 60%;
-    --stats-chart-4: 140 50% 50%;
+    --stats-chart-4: 142 71% 50%;
 
     /* Gradients - dark mode */
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 70%), hsl(217 91% 80%));
-    --gradient-secondary: linear-gradient(135deg, hsl(178 70% 45%), hsl(38 92% 60%));
-    --gradient-muted: linear-gradient(180deg, hsl(215 35% 8%), hsl(215 25% 20%));
+    --gradient-secondary: linear-gradient(135deg, hsl(173 80% 50%), hsl(38 92% 60%));
+    --gradient-muted: linear-gradient(180deg, hsl(217 33% 10%), hsl(217 33% 18%));
 
-    /* Shadows - dark mode enhanced */
+    /* Shadows - enhanced for dark mode */
     --shadow-elegant: 0 4px 16px -4px hsl(217 91% 70% / 0.25);
-    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.20);
+    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.30);
     --shadow-strong: 0 8px 24px -8px hsl(217 91% 70% / 0.35);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Sidebar - dark mode */
+    --sidebar-background: 217 33% 12%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 70%;
+    --sidebar-primary-foreground: 217 33% 10%;
+    --sidebar-accent: 217 33% 18%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 22%;
+    --sidebar-ring: 217 91% 70%;
   }
 }
 
@@ -158,5 +174,82 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ========================================
+   MOBILE-FRIENDLY ENHANCEMENTS
+   ======================================== */
+@layer utilities {
+  /* Toast notifications - mobile responsive */
+  .toast-mobile-friendly {
+    @apply max-w-[90vw] sm:max-w-md;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  /* Focus visible styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Scrollbar styling for better UX */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-muted rounded;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded hover:bg-muted-foreground/50;
+  }
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINT HELPERS
+   Mobile-first approach
+   ======================================== */
+@layer components {
+  /* Hide on mobile, show on tablet+ */
+  .hidden-mobile {
+    @apply hidden md:block;
+  }
+
+  /* Show on mobile, hide on tablet+ */
+  .mobile-only {
+    @apply block md:hidden;
+  }
+
+  /* Responsive text sizes */
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-responsive-base {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-lg {
+    @apply text-base sm:text-lg;
+  }
+
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  /* Responsive padding */
+  .padding-responsive {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+
+  /* Card shadows with hover effect */
+  .card-interactive {
+    @apply shadow-card hover:shadow-strong transition-shadow duration-300;
   }
 }

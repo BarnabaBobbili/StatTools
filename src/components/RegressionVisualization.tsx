@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Download, TrendingUp } from "lucide-react";
+import { showSuccess, showError } from "@/lib/errorHandling";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -49,15 +50,19 @@ export function RegressionVisualization({ xData, yData, xData2 }: RegressionVisu
   // Polynomial degree (2-5)
   const [degree, setDegree] = useState<number>(2);
 
-  // Handle PNG export
+  // Handle PNG export with error handling
   const handleExport = () => {
-    if (chartRef.current) {
-      const url = chartRef.current.toBase64Image();
-      const link = document.createElement('a');
-      link.download = `${regressionType}_regression.png`;
-      link.href = url;
-      link.click();
-      toast.success("Chart exported as PNG");
+    try {
+      if (chartRef.current) {
+        const url = chartRef.current.toBase64Image();
+        const link = document.createElement('a');
+        link.download = `${regressionType}_regression.png`;
+        link.href = url;
+        link.click();
+        showSuccess("Chart exported successfully");
+      }
+    } catch (error) {
+      showError("Failed to export chart", 'file');
     }
   };
 
@@ -121,8 +126,11 @@ export function RegressionVisualization({ xData, yData, xData2 }: RegressionVisu
       const maxY = Math.max(...yData);
     }
   } catch (error) {
-    toast.error("Error computing regression. Check your data.");
-    console.error(error);
+    showError(
+      "Unable to compute regression. Please check your data.",
+      'calculation'
+    );
+    console.error("Regression error:", error);
   }
 
   const datasets: any[] = [

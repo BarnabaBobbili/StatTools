@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, Check, X, TableIcon } from "lucide-react";
-import { toast } from "sonner";
+import { showSuccess, showError, showInfo } from "@/lib/errorHandling";
 import {
   Tooltip,
   TooltipContent,
@@ -51,17 +51,17 @@ export function SpreadsheetDataEntry({
   const addRow = () => {
     setRows([...rows, { id: nextId, value: '' }]);
     setNextId(nextId + 1);
-    toast.success("Row added");
+    showSuccess("Row added successfully");
   };
 
-  // Delete a row
+  // Delete a row with validation
   const deleteRow = (id: number) => {
     if (rows.length <= 1) {
-      toast.error("Must have at least one row");
+      showError("Cannot delete the last row", 'validation', 'warning');
       return;
     }
     setRows(rows.filter(row => row.id !== id));
-    toast.success("Row deleted");
+    showInfo("Row deleted");
   };
 
   // Update row value
@@ -71,36 +71,57 @@ export function SpreadsheetDataEntry({
     ));
   };
 
-  // Validate and submit data
+  // Validate and submit data with comprehensive error handling
   const handleSubmit = () => {
-    // Filter out empty rows and parse to numbers
-    const validNumbers: number[] = [];
-    const invalidRows: number[] = [];
+    try {
+      // Filter out empty rows and parse to numbers
+      const validNumbers: number[] = [];
+      const invalidRows: number[] = [];
 
-    rows.forEach((row, index) => {
-      if (row.value.trim() === '') {
-        return; // Skip empty rows
+      rows.forEach((row, index) => {
+        if (row.value.trim() === '') {
+          return; // Skip empty rows
+        }
+        const num = parseFloat(row.value);
+        if (isNaN(num)) {
+          invalidRows.push(index + 1);
+        } else if (!isFinite(num)) {
+          invalidRows.push(index + 1);
+        } else {
+          validNumbers.push(num);
+        }
+      });
+
+      // Show detailed error for invalid entries
+      if (invalidRows.length > 0) {
+        const rowList = invalidRows.slice(0, 5).join(', ');
+        const moreText = invalidRows.length > 5 ? ` and ${invalidRows.length - 5} more` : '';
+        showError(
+          `Invalid numbers in rows: ${rowList}${moreText}`,
+          'validation',
+          'error'
+        );
+        return;
       }
-      const num = parseFloat(row.value);
-      if (isNaN(num)) {
-        invalidRows.push(index + 1);
-      } else {
-        validNumbers.push(num);
+
+      if (validNumbers.length === 0) {
+        showError("Please enter at least one valid number", 'validation', 'warning');
+        return;
       }
-    });
 
-    if (invalidRows.length > 0) {
-      toast.error(`Invalid numbers in rows: ${invalidRows.join(', ')}`);
-      return;
+      // Success!
+      onDataSubmit(validNumbers);
+      showSuccess(
+        `Data submitted successfully`,
+        `${validNumbers.length} value${validNumbers.length > 1 ? 's' : ''} ready for analysis`
+      );
+    } catch (error) {
+      showError(
+        "Failed to process data",
+        'calculation',
+        'error'
+      );
     }
-
-    if (validNumbers.length === 0) {
-      toast.error("Please enter at least one valid number");
-      return;
-    }
-
-    onDataSubmit(validNumbers);
-    toast.success(`${validNumbers.length} values submitted`);
   };
 
   // Clear all data
@@ -110,7 +131,7 @@ export function SpreadsheetDataEntry({
       value: '' 
     })));
     setNextId(nextId + 5);
-    toast.info("Data cleared");
+    showInfo("All data cleared");
   };
 
   return (
@@ -123,11 +144,29 @@ export function SpreadsheetDataEntry({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
-          Enter numerical data in the table below. Leave rows empty to skip them.
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="cursor-help hover:text-foreground transition-colors">
+                  Enter numerical data in the table below. Empty rows will be ignored. 
+                  <span className="text-primary"> Hover for tips.</span>
+                </p>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p><strong>Tips:</strong></p>
+                <ul className="list-disc list-inside space-y-1 mt-1">
+                  <li>Leave rows empty to skip them</li>
+                  <li>Use Tab key to move between cells</li>
+                  <li>Invalid numbers will be highlighted in red</li>
+                  <li>Click Submit to validate and analyze your data</li>
+                </ul>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
-        {/* Scrollable table container for mobile */}
-        <div className="border rounded-lg overflow-auto max-h-96">
+        {/* Scrollable table container - mobile friendly with horizontal scroll */}
+        <div className="border rounded-lg overflow-auto max-h-[400px] md:max-h-96">
           <Table>
             <TableHeader>
               <TableRow>
@@ -186,8 +225,8 @@ export function SpreadsheetDataEntry({
           </Table>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-2 justify-between">
+        {/* Action buttons - stack on mobile, row on desktop */}
+        <div className="flex flex-col sm:flex-row gap-2 justify-between">
           <div className="flex gap-2">
             <TooltipProvider>
               <Tooltip>
