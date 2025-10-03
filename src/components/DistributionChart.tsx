@@ -33,6 +33,10 @@ interface DistributionChartProps {
   showArea?: boolean;
   xMin?: number;
   xMax?: number;
+  // P-value visualization: show shaded rejection region
+  pValue?: number;
+  alpha?: number; // Significance level (e.g., 0.05)
+  testType?: 'two-tailed' | 'left-tailed' | 'right-tailed';
 }
 
 export function DistributionChart({
@@ -41,7 +45,10 @@ export function DistributionChart({
   title = "Probability Density Function",
   showArea = false,
   xMin = -4,
-  xMax = 4
+  xMax = 4,
+  pValue,
+  alpha = 0.05,
+  testType = 'two-tailed'
 }: DistributionChartProps) {
   const chartRef = useRef<ChartJS<"line", { x: number; y: number }[], unknown>>(null);
 
@@ -80,21 +87,95 @@ export function DistributionChart({
   const { min, max } = getXRange();
   const data = generatePDFData(distribution, params, min, max, 200);
 
-  const chartData = {
-    labels: data.map(point => point.x.toFixed(2)),
-    datasets: [
-      {
-        label: "Probability Density",
-        data: data.map(point => ({ x: point.x, y: point.y })),
-        borderColor: "hsl(var(--stats-chart-1))",
-        backgroundColor: showArea ? "hsl(var(--stats-chart-1) / 0.1)" : undefined,
-        fill: showArea,
+  // Calculate critical values for p-value shading if provided
+  let criticalValues: { left?: number; right?: number } = {};
+  if (pValue !== undefined && distribution === 'normal') {
+    const normalParams = params as DistributionParams['normal'];
+    const mean = normalParams.mean;
+    const std = normalParams.std;
+    
+    // Calculate z-scores for alpha level
+    if (testType === 'two-tailed') {
+      const zCritical = 1.96; // For alpha=0.05
+      criticalValues.left = mean - zCritical * std;
+      criticalValues.right = mean + zCritical * std;
+    } else if (testType === 'left-tailed') {
+      const zCritical = -1.645; // For alpha=0.05
+      criticalValues.left = mean + zCritical * std;
+    } else if (testType === 'right-tailed') {
+      const zCritical = 1.645; // For alpha=0.05
+      criticalValues.right = mean + zCritical * std;
+    }
+  }
+
+  // Prepare datasets with rejection regions
+  const datasets: any[] = [
+    {
+      label: "Probability Density",
+      data: data.map(point => ({ x: point.x, y: point.y })),
+      borderColor: "hsl(var(--stats-chart-1))",
+      backgroundColor: showArea ? "hsl(var(--stats-chart-1) / 0.1)" : undefined,
+      fill: showArea,
+      tension: 0.4,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      borderWidth: 2,
+    }
+  ];
+
+  // Add rejection region shading if p-value visualization is enabled
+  if (pValue !== undefined && (criticalValues.left || criticalValues.right)) {
+    if (testType === 'two-tailed' && criticalValues.left && criticalValues.right) {
+      // Left tail rejection region
+      datasets.push({
+        label: `Rejection Region (α=${alpha})`,
+        data: data.filter(p => p.x <= criticalValues.left!).map(point => ({ x: point.x, y: point.y })),
+        borderColor: "hsl(var(--destructive))",
+        backgroundColor: "hsl(var(--destructive) / 0.2)",
+        fill: true,
         tension: 0.4,
         pointRadius: 0,
-        pointHoverRadius: 4,
-        borderWidth: 2,
-      }
-    ]
+        borderWidth: 0,
+      });
+      // Right tail rejection region
+      datasets.push({
+        label: '',
+        data: data.filter(p => p.x >= criticalValues.right!).map(point => ({ x: point.x, y: point.y })),
+        borderColor: "hsl(var(--destructive))",
+        backgroundColor: "hsl(var(--destructive) / 0.2)",
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        borderWidth: 0,
+      });
+    } else if (testType === 'left-tailed' && criticalValues.left) {
+      datasets.push({
+        label: `Rejection Region (α=${alpha})`,
+        data: data.filter(p => p.x <= criticalValues.left!).map(point => ({ x: point.x, y: point.y })),
+        borderColor: "hsl(var(--destructive))",
+        backgroundColor: "hsl(var(--destructive) / 0.2)",
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        borderWidth: 0,
+      });
+    } else if (testType === 'right-tailed' && criticalValues.right) {
+      datasets.push({
+        label: `Rejection Region (α=${alpha})`,
+        data: data.filter(p => p.x >= criticalValues.right!).map(point => ({ x: point.x, y: point.y })),
+        borderColor: "hsl(var(--destructive))",
+        backgroundColor: "hsl(var(--destructive) / 0.2)",
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        borderWidth: 0,
+      });
+    }
+  }
+
+  const chartData = {
+    labels: data.map(point => point.x.toFixed(2)),
+    datasets
   };
 
   const options = {

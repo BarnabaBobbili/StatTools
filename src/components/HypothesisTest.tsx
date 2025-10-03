@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatCard } from "./StatCard";
+import { DistributionChart } from "./DistributionChart";
 import { hypothesisTests } from "@/lib/statistical";
 import { TestTube, Target, AlertTriangle, CheckCircle, Info } from "lucide-react";
 
@@ -218,6 +219,38 @@ export function HypothesisTest() {
               </div>
             </CardContent>
           </Card>
+
+          {/* P-Value Visualization for t-test */}
+          {testType === "onesample" && results.tStatistic !== undefined && (
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>P-Value Visualization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DistributionChart
+                  distribution="studentt"
+                  params={{ df: results.degreesOfFreedom }}
+                  title="Student's t-Distribution with Rejection Regions"
+                  pValue={results.pValue}
+                  alpha={results.alpha}
+                  testType="two-tailed"
+                />
+                <div className="mt-4 text-sm text-muted-foreground">
+                  <p><strong>Red shaded areas:</strong> Rejection regions where we would reject H₀</p>
+                  <p><strong>Your test statistic:</strong> t = {results.tStatistic.toFixed(4)}</p>
+                  {results.reject ? (
+                    <p className="text-stats-warning font-medium mt-2">
+                      ✓ Test statistic falls in rejection region → Reject H₀
+                    </p>
+                  ) : (
+                    <p className="text-stats-success font-medium mt-2">
+                      ✓ Test statistic does not fall in rejection region → Fail to reject H₀
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
     </div>

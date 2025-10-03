@@ -12,9 +12,12 @@ import { CSVUploader } from "./CSVUploader";
 import { HistogramChart } from "./HistogramChart";
 import { BoxPlot } from "./BoxPlot";
 import { ScatterPlot } from "./ScatterPlot";
+import { RegressionVisualization } from "./RegressionVisualization";
+import { SpreadsheetDataEntry } from "./SpreadsheetDataEntry";
+import { ExportTools } from "./ExportTools";
 import { stats } from "@/lib/statistical";
 import { sampleDatasets, sampleRegressionData, SampleDatasetKey, SampleRegressionKey } from "@/lib/sampleData";
-import { BarChart3, TrendingUp, Sigma, Target, Upload, ScatterChart, Sparkles, Info } from "lucide-react";
+import { BarChart3, TrendingUp, Sigma, Target, Upload, ScatterChart, Sparkles, Info, TableIcon, Download } from "lucide-react";
 
 export function StatisticalAnalysis() {
   const [dataInput, setDataInput] = useState("1, 2, 3, 4, 5, 6, 7, 8, 9, 10");
@@ -111,10 +114,27 @@ export function StatisticalAnalysis() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="analysis" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="analysis">Data Analysis</TabsTrigger>
-          <TabsTrigger value="visualization">Visualization</TabsTrigger>
-          <TabsTrigger value="regression">Regression</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+          <TabsTrigger value="analysis" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Analysis</span>
+          </TabsTrigger>
+          <TabsTrigger value="spreadsheet" className="flex items-center gap-2">
+            <TableIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Spreadsheet</span>
+          </TabsTrigger>
+          <TabsTrigger value="visualization" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            <span className="hidden sm:inline">Charts</span>
+          </TabsTrigger>
+          <TabsTrigger value="regression" className="flex items-center gap-2">
+            <ScatterChart className="h-4 w-4" />
+            <span className="hidden sm:inline">Regression</span>
+          </TabsTrigger>
+          <TabsTrigger value="export" className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Export</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="analysis" className="space-y-6">
@@ -418,6 +438,48 @@ export function StatisticalAnalysis() {
               />
             </CardContent>
           </Card>
+
+          {/* Advanced Regression Visualization */}
+          <RegressionVisualization
+            xData={parseXYData(xDataInput, yDataInput).x}
+            yData={parseXYData(xDataInput, yDataInput).y}
+          />
+        </TabsContent>
+
+        {/* Spreadsheet Data Entry Tab */}
+        <TabsContent value="spreadsheet" className="space-y-6">
+          <SpreadsheetDataEntry
+            onDataSubmit={(data) => {
+              setDataInput(data.join(", "));
+              setFilename("Spreadsheet Data");
+              // Auto-analyze after submission
+              setTimeout(analyzeData, 100);
+            }}
+            initialData={parseData(dataInput)}
+          />
+        </TabsContent>
+
+        {/* Export Tab */}
+        <TabsContent value="export" className="space-y-6">
+          <div id="export-chart-container">
+            <ExportTools
+              data={parseData(dataInput)}
+              stats={analysisResults ? {
+                "Mean": analysisResults.mean,
+                "Median": analysisResults.median,
+                "Std Dev": analysisResults.standardDeviation,
+                "Variance": analysisResults.variance,
+                "Min": analysisResults.min,
+                "Max": analysisResults.max,
+                "Range": analysisResults.range,
+                "Skewness": analysisResults.skewness,
+                "Kurtosis": analysisResults.kurtosis,
+                "Count": analysisResults.count
+              } : {}}
+              chartElementId="export-chart-container"
+              reportTitle={filename || "Statistical Analysis"}
+            />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

@@ -11,6 +11,8 @@ import { DatasetComparison } from "@/components/DatasetComparison";
 import { AdvancedHypothesisTest } from "@/components/AdvancedHypothesisTest";
 import { ConfidenceIntervals } from "@/components/ConfidenceIntervals";
 import { SimulationTools } from "@/components/SimulationTools";
+import { RegressionVisualization } from "@/components/RegressionVisualization";
+import { SpreadsheetDataEntry } from "@/components/SpreadsheetDataEntry";
 import { DistributionType, DistributionParams } from "@/lib/statistical";
 import { BarChart3, Calculator, TestTube, TrendingUp, Sigma, GitCompare, Target, Dices } from "lucide-react";
 
