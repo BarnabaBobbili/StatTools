@@ -97,7 +97,7 @@ const Home = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Link to="/tools">
+              <Link to="/distributions">
                 <Button size="lg" variant="secondary" className="text-lg px-8 py-6 shadow-elegant">
                   Get Started
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -200,7 +200,7 @@ const Home = () => {
             <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
               Access all statistical tools instantly - no account or installation needed
             </p>
-            <Link to="/tools">
+            <Link to="/distributions">
               <Button size="lg" variant="secondary" className="text-lg px-8 py-6 shadow-elegant">
                 Launch StatTools
                 <ArrowRight className="ml-2 h-5 w-5" />
