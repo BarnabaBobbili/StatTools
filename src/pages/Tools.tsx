@@ -16,7 +16,7 @@ import { SpreadsheetDataEntry } from "@/components/SpreadsheetDataEntry";
 import { DistributionType, DistributionParams } from "@/lib/statistical";
 import { BarChart3, Calculator, TestTube, TrendingUp, Sigma, GitCompare, Target, Dices } from "lucide-react";
 
-const Index = () => {
+const Tools = () => {
   const [distribution, setDistribution] = useState<DistributionType>("normal");
   const [params, setParams] = useState<DistributionParams[DistributionType]>({
     mean: 0,
@@ -219,4 +219,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Tools;
