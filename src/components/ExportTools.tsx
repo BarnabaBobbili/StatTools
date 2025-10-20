@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, FileJson } from "lucide-react";
 import { showSuccess, showError, showInfo } from "@/lib/errorHandling";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -75,6 +75,48 @@ export function ExportTools({
         'file'
       );
       console.error("CSV export error:", error);
+    }
+  };
+
+  // Export data as JSON
+  const exportJSON = () => {
+    try {
+      // Validate data
+      if (!data || data.length === 0) {
+        showError("No data available to export", 'validation', 'warning');
+        return;
+      }
+
+      // Create JSON structure
+      const jsonData = {
+        title: reportTitle,
+        exportDate: new Date().toISOString(),
+        dataPoints: data.length,
+        data: data,
+        statistics: stats
+      };
+
+      // Create download link
+      const blob = new Blob([JSON.stringify(jsonData, null, 2)], { 
+        type: 'application/json;charset=utf-8;' 
+      });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${reportTitle.replace(/\s/g, '_')}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showSuccess(
+        "JSON exported successfully",
+        `${data.length} data points with statistics exported`
+      );
+    } catch (error) {
+      showError("Failed to export JSON file", 'file');
+      console.error("JSON export error:", error);
     }
   };
 
@@ -262,6 +304,7 @@ export function ExportTools({
                 <p><strong>Export Options:</strong></p>
                 <ul className="list-disc list-inside space-y-1 mt-1">
                   <li><strong>CSV:</strong> Raw data + statistics, compatible with Excel</li>
+                  <li><strong>JSON:</strong> Structured data format for programming and APIs</li>
                   <li><strong>PDF:</strong> Complete report with charts and formatted statistics</li>
                 </ul>
               </TooltipContent>
@@ -269,7 +312,7 @@ export function ExportTools({
           </TooltipProvider>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* CSV Export */}
           <Button
             variant="outline"
@@ -283,6 +326,19 @@ export function ExportTools({
             </div>
           </Button>
 
+          {/* JSON Export */}
+          <Button
+            variant="outline"
+            onClick={exportJSON}
+            className="gap-2 h-auto py-4 flex-col"
+          >
+            <FileJson className="h-6 w-6" />
+            <div className="text-center">
+              <div className="font-semibold">Export JSON</div>
+              <div className="text-xs text-muted-foreground">Structured Data</div>
+            </div>
+          </Button>
+
           {/* PDF Export */}
           <Button
             variant="outline"
@@ -292,13 +348,14 @@ export function ExportTools({
             <FileText className="h-6 w-6" />
             <div className="text-center">
               <div className="font-semibold">Export PDF</div>
-              <div className="text-xs text-muted-foreground">Full Report with Chart</div>
+              <div className="text-xs text-muted-foreground">Full Report</div>
             </div>
           </Button>
         </div>
 
         <div className="text-xs text-muted-foreground">
           <p><strong>CSV:</strong> Tabular data format, compatible with Excel and spreadsheet software</p>
+          <p><strong>JSON:</strong> Structured format for APIs, programming, and data interchange</p>
           <p><strong>PDF:</strong> Complete report with statistics, charts, and data table</p>
         </div>
       </CardContent>
