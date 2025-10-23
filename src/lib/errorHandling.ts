@@ -6,7 +6,7 @@ import { toast as sonnerToast } from "sonner";
  */
 
 // Error types for better categorization
-export type ErrorType = 'validation' | 'calculation' | 'file' | 'network' | 'unknown';
+export type ErrorType = 'validation' | 'calculation' | 'file' | 'network' | 'storage' | 'auth' | 'unknown';
 
 // Error severity levels
 export type ErrorSeverity = 'error' | 'warning' | 'info';
@@ -80,6 +80,10 @@ function getErrorDescription(type: ErrorType): string {
       return 'There was a problem reading the file.';
     case 'network':
       return 'Network request failed. Please check your connection.';
+    case 'storage':
+      return 'Failed to save or retrieve data from storage.';
+    case 'auth':
+      return 'Authentication error occurred.';
     default:
       return 'An unexpected error occurred.';
   }

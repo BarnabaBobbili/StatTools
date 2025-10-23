@@ -11,6 +11,7 @@ import Probability from "./pages/Probability";
 import Hypothesis from "./pages/Hypothesis";
 import Confidence from "./pages/Confidence";
 import Simulations from "./pages/Simulations";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/distributions" element={<Distributions />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/comparison" element={<Comparison />} />
