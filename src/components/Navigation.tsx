@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sigma } from "lucide-react";
+import { UserMenu } from "@/components/UserMenu";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -26,6 +27,7 @@ export const Navigation = () => {
           </Link>
 
           <div className="hidden md:flex items-center gap-2">
+            <UserMenu />
             <Link to="/">
               <Button variant={isActive("/") ? "default" : "ghost"} size="sm">
                 Home
@@ -68,7 +70,8 @@ export const Navigation = () => {
             </Link>
           </div>
 
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            <UserMenu />
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
